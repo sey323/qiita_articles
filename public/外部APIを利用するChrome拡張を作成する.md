@@ -4,7 +4,7 @@ tags:
   - Chrome
   - chrome-extension
 private: false
-updated_at: '2024-02-12T17:29:55+09:00'
+updated_at: '2024-02-12T22:34:34+09:00'
 id: 2c68214f81be7b6d5cc9
 organization_url_name: null
 slide: false
@@ -13,13 +13,13 @@ ignorePublish: false
 
 # はじめに
 
-自作の Chrome 拡張外部 API をリクエストする処理を実装する場合の実装方法です。簡単にできると思いきや、結構めんどくさかったので備忘録となります。
+自作した Chrome 拡張で外部 API をリクエストする処理を実装する場合の実装方法です。簡単にできると思いきや、結構めんどくさかったので備忘録となります。
 
 # 実装
 
 今回は動作確認用として、画面を開いたら Qiita の記事一覧取得 API をリクエストし、コンソールログに表示する拡張機能を作成する。
 
-API を curl で実行する場合は以下の通り
+対象のAPI を curl で実行する場合は以下の通り
 
 ```bash:
 curl -X 'GET' https://qiita.com/api/v2/items
@@ -27,7 +27,7 @@ curl -X 'GET' https://qiita.com/api/v2/items
 
 ## 全体構成
 
-最終的なフォルダ構成は以下。
+最終的なフォルダ構成はこちら
 
 ```sh
 src ---  manifest.json
@@ -38,7 +38,9 @@ src ---  manifest.json
 
 ## jquery のダウンロード
 
-外部 API 通信を行う際に Ajax を利用するので、jquery のソースコードをダウンロードしておく必要がある。jquery は以下の URL からダウンロードする。
+はじめに、外部 API 通信を行う際に Ajax を利用するたため、jquery のソースコードをダウンロードしておく必要がある
+
+jquery は以下の URL からダウンロードする
 
 https://releases.jquery.com/
 
