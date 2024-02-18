@@ -1,0 +1,32 @@
+name: Pull Qiita article and create PR
+
+on:
+  schedule:
+    - cron: "0 22 * * *" # 7:00 JST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  pull_and_create_pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: master
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18.16.0"
+      - run: npm install
+      - run: npm exec qiita pull -- --force
+        env:
+          QIITA_TOKEN: ${{ secrets.QIITA_TOKEN }}
+      - uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "Sync article files"
+          delete-branch: true
+          title: "Sync article files"
+          reviewers: ${{ github.repository_owner }}
