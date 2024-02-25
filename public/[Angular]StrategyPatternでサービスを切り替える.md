@@ -1,13 +1,13 @@
 ---
-title: "[Angular]StrategyPatternでサービスを切り替える"
+title: '[Angular]StrategyPatternでサービスを切り替える'
 tags:
-  - "TypeScript"
-  - "Angular"
-  - "DesignPattern"
-  - "StrategyPattern"
+  - TypeScript
+  - Angular
+  - DesignPattern
+  - StrategyPattern
 private: false
-updated_at: ""
-id: null
+updated_at: '2024-02-25T22:42:37+09:00'
+id: 48c4312aba7afd8769a7
 organization_url_name: null
 slide: false
 ignorePublish: false
