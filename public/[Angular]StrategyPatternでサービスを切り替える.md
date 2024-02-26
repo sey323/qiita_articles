@@ -1,12 +1,12 @@
 ---
-title: '[Angular]StrategyPatternでサービスを切り替える'
+title: '[Angular]Strategy Patternでifやswitchを利用せずサービスを切り替える'
 tags:
   - TypeScript
   - Angular
   - DesignPattern
   - StrategyPattern
 private: false
-updated_at: '2024-02-25T22:42:37+09:00'
+updated_at: '2024-02-25T22:48:55+09:00'
 id: 48c4312aba7afd8769a7
 organization_url_name: null
 slide: false
@@ -24,13 +24,13 @@ Angular にはデフォルトで強力な DI 機能が備わっている。こ�
 # Strategy Pattern とは
 
 Strategy Pattern は、プログラムへの入出力(=インターフェース)が同じで、中身のアルゴリズムだけが異なる場合に使われるデザインパターンである。
-例として四則演算が挙げられる。四則演算は、入力が 2 つの数字の組み合わせ、出力が 1 つの数字となり、計算方法が足し算か引き算かなどで中身のアルゴリズムが変わる。
+例として四則演算が挙げられる。四則演算は、入力が 2 つの数字の組み合わせ、出力が 1 つの数字というインターフェースは同じだが、計算方法が足し算か引き算かで中身のアルゴリズムが変わる。
 
-Strategy Pattern を適応可能な例として四則演算がある。その場合、四則演算の概念を `interface`とし、足し算、引き算などのアルゴリズムを`interface`を実装したクラスとして扱う。
+Strategy Pattern を四則演算に適応した場合、四則演算の概念を `interface`とし、足し算、引き算などのアルゴリズムを`interface`を実装したクラスとして実装する。
 
-そして Strategy サービスで実装するアルゴリズムを切り替える。
+そして Strategy サービスで、実行するアルゴリズムを切り替える。
 
-四則演算で Strategy Pattern を実装すると、クラス図は以下のようになる。
+上記の例で Strategy Pattern を実装すると、クラス図は以下のようになる。
 
 ```plantuml
 @startuml
@@ -75,6 +75,8 @@ DivideService -up-> CalculationInterface
 動作は以下のようになる。`Result`の値がセレクトボックスで指定した四則演算の種類に応じて変わることが確認できる。
 
 ![demo_2.gif](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/82a5c304-31b9-d128-9c78-0e44f437723e.gif)
+
+通常この様な画面を作成すると、`switch`や`if`文で複数のif文を記載する必要があるが、Strategy Patternを利用することで、`switch`や`if`文を利用せずに処理を切り替えることができる
 
 利用したソースコードは Github を参照
 
@@ -313,7 +315,7 @@ export class AppComponent {
 
 `calculate`メソッドの(1)の箇所で、選択されている四則演算の種類のキー(`selectedCalculation`)を引数として与え、Strategy サービスで実行する四則演算の種類を切り替える。
 
-これによりコンポーネントでは if や switch 文を使わずに、与えられたセレクトボックスの種類に応じてサービスを切り替えることができる。
+コンポーネントでは `switch`や`if`文を使わずに、与えられたセレクトボックスの種類に応じてサービスを切り替えることができる。
 
 # おわりに
 
