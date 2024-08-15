@@ -1,13 +1,13 @@
 ---
 title: RainbowKitを利用しINTMAX WalletでDappsに接続する
 tags:
-  - Web3
-  - RainbowKit
   - React
   - Next.js
+  - Web3
+  - rainbowkit
 private: false
-updated_at: ""
-id: null
+updated_at: '2024-08-15T17:48:21+09:00'
+id: e0771797db17be2bfc3b
 organization_url_name: null
 slide: false
 ignorePublish: false
