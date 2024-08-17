@@ -6,7 +6,7 @@ tags:
   - Web3
   - rainbowkit
 private: false
-updated_at: '2024-08-15T17:48:21+09:00'
+updated_at: '2024-08-16T17:45:12+09:00'
 id: e0771797db17be2bfc3b
 organization_url_name: null
 slide: false
@@ -27,7 +27,7 @@ https://guide.wallet.intmax.io/v/japanese
 ## RainbowKit とは
 
 RainbowKit は dApps にウォレットを簡単に接続できる React ライブラリ。  
-RainbowKit を利用することで、Dapps の実装に必要な、ウォレットの接続やトランザクションの署名を簡単に実装することができる。
+RainbowKit を利用することで、Dapps の実装に必要な、ウォレットの接続を簡単に実装することができる。
 
 https://github.com/rainbow-me/rainbowkit
 
