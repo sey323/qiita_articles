@@ -5,7 +5,7 @@ tags:
   - Supabase
   - Nuxt3
 private: true
-updated_at: '2024-10-13T23:34:42+09:00'
+updated_at: '2024-10-13T23:35:35+09:00'
 id: 6bfabc00ebe68dbedccf
 organization_url_name: null
 slide: false
