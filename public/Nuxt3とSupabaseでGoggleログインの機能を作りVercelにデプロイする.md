@@ -1,10 +1,12 @@
 ---
 title: Nuxt3とSupabaseでGoggleログインの機能を作りVercelにデプロイする
 tags:
-  - ""
+  - Vercel
+  - Supabase
+  - Nuxt3
 private: true
-updated_at: ""
-id: null
+updated_at: '2024-10-13T19:11:51+09:00'
+id: 6bfabc00ebe68dbedccf
 organization_url_name: null
 slide: false
 ignorePublish: false
