@@ -5,7 +5,7 @@ tags:
   - Supabase
   - Nuxt3
 private: true
-updated_at: '2024-10-13T19:11:51+09:00'
+updated_at: '2024-10-13T23:34:42+09:00'
 id: 6bfabc00ebe68dbedccf
 organization_url_name: null
 slide: false
@@ -61,12 +61,20 @@ https://supabase.com/dashboard/projects
 
 ![スクリーンショット 2024-10-13 17.53.59.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/22659de6-254a-4bca-e68f-a2e7dfeb38b3.png)
 
-ダッシュボードに表示されている「Project URL」「API Key」を`.env`ファイルに保存する。
+ダッシュボードに表示されている「Project URL」「API Key」を`.env`ファイルに保存する。また、Google 認証後のリダイレクト先の URL を設定しておく。
 
 ```sh:.env
 SUPABASE_URL=${コピーしたProject URL}
-SUPABASE_KEY=${コピーしたAPI Key}
+SUPABASE_ANON_KEY=${コピーしたAPI Key}
+
+REDIRECT_HOST=http://localhost:3000
 ```
+
+:::note info
+公式では`SUPABASE_KEY`を利用しているが、`SUPABASE_KEY`は Vercel と Supabase の連携の際に、自動で連携がされない。
+
+自動で連携される`SUPABASE_ANON_KEY`に変更している。
+:::
 
 ### `@nuxtjs/supabase`をプロジェクトに追加
 
@@ -80,13 +88,24 @@ npx nuxi@latest module add supabase
 
 ```vue:nuxt.config.ts
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/supabase'],
-})
+  modules: ["@nuxtjs/supabase"],
+  supabase: {
+    key: process.env.SUPABASE_ANON_KEY, // Supabase の API Keyの設定
+  },
+  runtimeConfig: {
+    public: {
+      redirectHost: process.env.REDIRECT_HOST, // リダイレクト先の ホスト名の設定
+    },
+  },
+});
+
 ```
 
 ## Google ログインの設定
 
 事前準備として、Google Cloud Platform にアクセスし、プロジェクトを作成する
+
+https://console.cloud.google.com/welcome
 
 ### Google 認証の Auth 同意画面を作成
 
@@ -153,12 +172,12 @@ Google の Provider を設定し、各種パラメータに以下の値を入力
 ```vue:pages/login.vue
 <script setup lang="ts">
   const supabase = useSupabaseClient();
-
+  const runtimeConfig = useRuntimeConfig();
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "http://localhost:3000/confirm",
+        redirectTo: `${runtimeConfig.public.redirectHost}/confirm`,
       },
     });
     if (error) console.log(error);
@@ -173,16 +192,18 @@ Google の Provider を設定し、各種パラメータに以下の値を入力
 
 ```vue:pages/confirm.vue
 <script setup lang="ts">
-const user = useSupabaseUser()
+  const user = useSupabaseUser();
 
-watch(user, () => {
-  if (user.value) {
-      // Redirect to protected page
-      return navigateTo('/')
-  }
-}, { immediate: true })
+  watch(
+    user,
+    () => {
+      if (user.value) {
+        return navigateTo("/");
+      }
+    },
+    { immediate: true }
+  );
 </script>
-
 <template>
   <div>Waiting for login...</div>
 </template>
@@ -224,3 +245,70 @@ watch(user, () => {
 Google のログイン完了後、`localhost:3000`にリダイレクトされ、「Hello!」の後にログインしたユーザのメールアドレスが表示されていれば成功
 
 ![demo-2.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/231e8e16-7a18-df24-ed63-de037660657a.png)
+
+## Vercel にデプロイ
+
+事前準備として、Github に Public リポジトリを作成し、プロジェクトをプッシュする
+
+:::note warn
+Vercel の無料プランではプライベートリポジトリのデプロイができないため、無料プランを利用している場合は Public リポジトリを作成する必要がある
+:::
+
+### Vercel にプロジェクトを作成
+
+ダッシュボードの「New Project」よりプロジェクトを作成する
+
+![vercel-create-project.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/fb18fa88-cb9f-3fcd-8d3e-a5a336ced401.png)
+
+「Import Git Repository」で Github に Push したリポジトリを選択し、「Import」をクリックする
+
+![vercel-create-project-2.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/cecbd0b0-4cfc-4aaf-dfd4-299e9b347dcc.png)
+
+「Project Name」に任意の名前を入力し、「Deploy」をクリックする
+
+![deploy-project.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/72a64c91-59ee-b8d9-9036-7c29e06c8c80.png)
+
+「Deploy」が完了するが、この状態では Supabase の設定が反映されていないため、500 エラーとなる。
+
+![スクリーンショット 2024-10-13 22.10.41.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/164441da-9606-a0c5-21a6-31381d514388.png)
+
+### Vercel と Supabase の環境変数を設定
+
+Project の「Settings > Integrations」より Supabase を選択し、「Configure」をクリックする。
+
+![supabase-configure.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/0fa1d04a-702d-0a59-42b9-361ddd389fa7.png)
+
+「Integrations」に Supabase が表示されていない時は「Browse Marketplace」より Supabase を検索し、追加する
+
+![browse-marketplace.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/dd980702-a3c0-08cf-0e74-3ff174806e9f.png)
+
+設定画面で、該当するプロジェクトがある組織かプロジェクトを選択する。
+
+![project-org-select.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/29dc3d88-8d8c-3216-2802-621d751fbf70.png)
+
+画面赤枠の「Add new project connection」をクリックする。
+
+![relation-vercel-supabase.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/a04c92ad-24a5-cc35-051e-cf1da17de605.png)
+
+その後、Supabase のプロジェクトと先ほど作成した Vercel のプロジェクトを選択し、「Connect project」をクリックする
+
+![connect-vercel-supabase.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/48e748b1-cd18-12f8-a22e-befc1cdf09ca.png)
+
+連携が成功したら、Vercel のプロジェクトに環境変数が自動で設定される。
+
+追加でログイン後のリダイレクト先である`REDIRECT_HOST`を設定する。今回の場合であれば、vercel の URL(`https://nuxt-supbase-google-login-app.vercel.app`)を設定する。
+
+![vercel-env.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/3e8cb8de-97b5-bbd5-018f-d6fd28ef4f6c.png)
+
+### Supabase に Vercel の URL をリダイレクト先として許可
+
+Supabase のダッシュボードにアクセスし、「Authentication > URL Configuration」の画面に移動する。「Redirects URL」よりデプロイした Vercel の URL を追加する。
+
+今回であれば以下の 2 つの URL を追加する。
+
+- `https://nuxt-supbase-google-login-app.vercel.app`
+- `https://nuxt-supbase-google-login-app.vercel.app/**`
+
+![supabase-redirect-url.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/163680/fe2c5b4c-98de-bd78-89e3-da688348f623.png)
+
+この設定がないと、Google のログイン後にリダイレクトができず、`localhost:3000`にリダイレクトされてしまう。
